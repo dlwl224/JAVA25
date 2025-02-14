@@ -1,0 +1,172 @@
+package feb13web.web;
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BoardDAO {
+	// 데이터베이스에 접속해서 해당 글 목록을 가져옵니다.
+	public List<Board> list() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT board_no, board_title, board_date, user_no,"
+						+ " user_name, board_like FROM viewboard"
+						+ " LIMIT 0, 10;";
+		List<Board> list = null;
+
+		try {
+			conn = DBConn.getInstance().getConn();
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			list = new ArrayList<Board>();
+			while (rs.next()) {
+				Board board = new Board();
+				board.setBoard_no(rs.getInt("board_no"));
+				board.setBoard_title(rs.getString("board_title"));
+				board.setBoard_date(rs.getString("board_date"));
+				board.setUser_no(rs.getInt("user_no"));
+				board.setUser_name(rs.getString("user_name"));
+				list.add(board);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				pstmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	} // method list end
+
+	//글쓰기 메소드
+	public int write(Board board) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "INSERT INTO board("
+				+ "board_title, board_content, user_no)"
+				+ " VALUES (?, ?, ?)";
+		int result = 0;
+
+		//조립
+		try {
+			conn = DBConn.getInstance().getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, board.getBoard_title());
+			pstmt.setString(2, board.getBoard_content());
+			pstmt.setInt(3, board.getUser_no());
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	//글 하나 읽기 detail
+	public Board detail(int board_no) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT board_no, board_title, board_content, "
+					+ "board_like, board_date, user_no FROM board "
+					+ "WHERE board_no=?;";
+		Board detail = new Board();
+		
+		try {			
+			conn = DBConn.getInstance().getConn();
+			pstmt = conn.prepareStatement(sql);
+			//값 세팅
+			pstmt.setInt(1, board_no);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				detail.setBoard_no(rs.getInt("board_no"));
+				detail.setBoard_title(rs.getString("board_title"));
+				detail.setBoard_content(rs.getString("board_content"));
+				detail.setBoard_date(rs.getString("board_date"));
+				detail.setUser_no(rs.getInt("user_no"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				pstmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}			
+		}		
+		return detail;
+	}
+	
+	//글삭제
+	public int delete(int board_no) {
+		int result = 0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "DELETE FROM board WHERE board_no=?";
+		
+		try {
+			conn = DBConn.getInstance().getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, board_no);
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
+	
+	//update()
+	public int update(Board board) {
+		int result = 0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "UPATE SET board_title=?, board_content=?,"
+				+"user_no=?"
+				+"WHERE board_no=?";
+		
+		try {
+			conn = DBConn.getInstance().getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, board.getBoard_title());
+			pstmt.setString(2, board.getBoard_content());
+			pstmt.setInt(3, board.getUser_no());
+			pstmt.setInt(4, board.getBoard_no());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return result;
+	}
+	
+	
+}
