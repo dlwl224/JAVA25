@@ -1,0 +1,13 @@
+package feb13web.web;
+
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class Board {
+	private int board_no;
+	private String board_title, board_content, board_date, user_name;
+	private int user_no, board_like;
+}
