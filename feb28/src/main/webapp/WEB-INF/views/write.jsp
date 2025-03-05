@@ -50,7 +50,7 @@
 	<h1>글쓰기</h1>
 
 	<div class="write-div">
-		<form action="./write" method="post">
+		<form action="./write1" method="post">
 			<input name="board_title" id="title" class="" placeholder="제목을 입력하세요.">
 			<textarea name="board_content" id="content" class="" placeholder="내용을 입력하세요"></textarea>
 			<button type="submit" id="write-btn">저장하기</button>

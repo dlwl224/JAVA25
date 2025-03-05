@@ -96,7 +96,7 @@
 	</c:if>
     <div class="login-container">
         <h2>로그인</h2>
-        <form action="/login" method="post">
+        <form action="./login" method="post">
             <div class="form-group">
                 <label for="username">아이디</label>
                 <input type="text" id="username" name="username" placeholder="아이디를 입력하세요" required>

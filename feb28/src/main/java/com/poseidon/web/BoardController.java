@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.poseidon.web.dto.BoardDTO;
 import com.poseidon.web.service.BoardService;
@@ -34,19 +35,45 @@ public class BoardController {
 	}
 	// 글쓰기 페이지 열어주는 
 	@GetMapping("/write")
-	public String write() {
-		return "write";
+	public String write1(@SessionAttribute(name="user_id", required=true) String user_id) {
+		//HttpSession session=request.getSession();
+		//session.getAttribute("user_id");
+		//if(session.getAttribute("user_id")!= null) {//로그인 즉, user_id가 있는지 검사하기
+		//	return "write";
+		//}else {
+		//	return "redirect:/login";
+		//}
+		System.out.println("어노테이션으로 표시한 세션:"+user_id);
+		if(user_id !=null) {
+			return "write";
+		}else {
+			return "redict:/login";
+		}
+		
+		
 	}
 	
 	// 값을 가지고 옵니다: 글쓰기를 눌렀을 때 동작
+	//아래 조건을 바꿔주세요. 1. 어노테이션으로 작업하는 모양으로 변경해주세요
+	//세션 검사해주세요
 	@PostMapping("/write1")
-	public String write(HttpServletRequest request) {
-		String title =request.getParameter("board_title");
-		String content= request.getParameter("board_content");
-		System.out.println("제목: "+ title);
-		System.out.println("본문 : " + content);
+	public String write(HttpServletRequest request,
+			 			@SessionAttribute(name="user_id", required=false) String user_id) {
+		if(user_id !=null) {
+			String title = request.getParameter("board_title");
+			String content = request.getParameter("board_content");
+			//DTO 만들기
+			BoardDTO dto = new BoardDTO();
+			dto.setBoard_title(title);
+			dto.setBoard_content(content);
+			dto.setUser_id(user_id);
+			boardService.write1(dto);
+			
+			return "redirect:/board";
+		}else {
+			return "redirect:/login";
+		}
 		
-		return "redirect:/board";
 	}
 	
 	@PostMapping("/write")
@@ -57,6 +84,22 @@ public class BoardController {
 		// 서비스에게 일 시키기
 		//boardService.write(dto);
 		return "redirect:/board";
+	}
+	
+	// ./detail?board_no=32&pageNo=1
+	//http://localhost:8080/web/detail?board_no=32
+	//http://localhost:8080/web/detail
+	@GetMapping("/detail")
+	public String detail(Model model,
+			@RequestParam(value="board_no", required= true, defaultValue="1") int board_no) {
+		//HttpServletRequest request 사용할때
+		//System.out.println(request.getParameter("board_no"));
+		//System.out.println(board_no);
+		
+		//boardService가 일하게 하기
+		BoardDTO detail=boardService.detail(board_no);
+		model.addAttribute("detail",detail);
+		return "detail";
 	}
 
 

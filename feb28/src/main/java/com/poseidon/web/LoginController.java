@@ -74,8 +74,11 @@ public class LoginController {
 		
 		return "redirect:/login";
 	}
-	
-	
-	
-
 }
+
+//2025-03-05 웹페이지 화면 구축
+//ECMA script = java script    .js
+
+//node.js ----TypeScript
+//추론 타입 var name=10;
+//자바스크립트 확장 .jsx

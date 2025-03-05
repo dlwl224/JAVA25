@@ -10,11 +10,11 @@
 		
 		<c:choose>
 			<c:when test="${sessionScope.user_name eq null }">
-				<li><a href="/login">로그인</a></li>
+				<li><a href="./login">로그인</a></li>
 			</c:when>
 			<c:otherwise>
-				<li><a href="/myinfo">${sessionScope.user_name }님 반갑습니다.</a></li>
-				<li><a href="/logout">로그아웃</a></li>
+				<li><a href="./myinfo">${sessionScope.user_name }님 반갑습니다.</a></li>
+				<li><a href="./logout">로그아웃</a></li>
 			</c:otherwise>
 		</c:choose>
 

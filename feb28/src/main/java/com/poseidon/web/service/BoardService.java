@@ -29,4 +29,14 @@ public class BoardService {
 		boardDAO.write(map);
 	}
 
+	public void write1(BoardDTO dto) {
+		boardDAO.write1(dto);
+		
+	}
+
+	public BoardDTO detail(int board_no) {	
+		//필요한 로직이 있다면 적어주세요.
+		return boardDAO.detail(board_no);
+	}
+
 }
