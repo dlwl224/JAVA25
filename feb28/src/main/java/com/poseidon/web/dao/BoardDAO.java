@@ -44,4 +44,8 @@ public class BoardDAO {
 	public BoardDTO detail(int board_no){
 		return sqlSession.selectOne("board.detail",board_no);
 	}
+	//우리는 진짜 삭제를 하는것이 아니라 데이터베이스에 board_del 값을 0으로 변경합니다
+	public int del(BoardDTO dto) {
+		return sqlSession.update("board.del",dto);
+	}
 }

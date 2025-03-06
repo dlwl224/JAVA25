@@ -39,4 +39,9 @@ public class BoardService {
 		return boardDAO.detail(board_no);
 	}
 
+	public int del(BoardDTO dto) {
+	
+		return boardDAO.del(dto);
+	}
+
 }

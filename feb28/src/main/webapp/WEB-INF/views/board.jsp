@@ -39,7 +39,7 @@ td{
 //자바스크립트 영역
 function detail(no){
 	//console.log(no+'detail을 클릭했습니다.');
-	location.herf="./detail?board_no="+no;
+	location.href="./detail?board_no="+ no;
 	
 }
 </script>
@@ -54,7 +54,7 @@ function detail(no){
 			<h2>로그인 해주세요.</h2>
 		</c:when>
 		<c:otherwise>
-			<h2>${sessionScope.user_name }님 반값습니다.</h2>	
+			<h2>${sessionScope.user_name }님 반갑습니다.</h2>	
 		</c:otherwise>
 	</c:choose>
 	
@@ -101,8 +101,10 @@ function detail(no){
 			데이터가 없습니다
 		</c:otherwise>
 	</c:choose>
+	
+	<c:if test="${sessionScope.user_id eq null}">
 	<button onclick="location.href='./write'">글쓰기</button>
-
+	</c:if>
 
 
 	<hr>

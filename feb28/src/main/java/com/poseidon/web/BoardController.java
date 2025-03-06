@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.poseidon.web.dto.BoardDTO;
 import com.poseidon.web.service.BoardService;
+import com.poseidon.web.util.Util;
 
 @Controller
 public class BoardController {
@@ -22,6 +23,8 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
+	@Autowired
+	private Util util;
 	//보드 화면 출력 /board
 	@GetMapping("/board")
 	public String board(Model model) {
@@ -62,10 +65,14 @@ public class BoardController {
 		if(user_id !=null) {
 			String title = request.getParameter("board_title");
 			String content = request.getParameter("board_content");
+			//특수 기호 < &lt;> &gt;
+			title=util.htmlTag(title);
+			//줄바꿈 처리
+			content= util.htmlTag(content);
 			//DTO 만들기
 			BoardDTO dto = new BoardDTO();
-			dto.setBoard_title(title);
-			dto.setBoard_content(content);
+			dto.setBoard_title(util.htmlTag(title));
+			dto.setBoard_content(util.newLine(content));
 			dto.setUser_id(user_id);
 			boardService.write1(dto);
 			
@@ -99,8 +106,49 @@ public class BoardController {
 		//boardService가 일하게 하기
 		BoardDTO detail=boardService.detail(board_no);
 		model.addAttribute("detail",detail);
-		return "detail";
+		return "detail";	
+		
 	}
+	
+	//post 방식 /del
+	   @PostMapping("/del")
+	   public String delete(
+	         @RequestParam(name = "board_no", required = true) int board_no,  
+	         @SessionAttribute(name = "user_id", required = false) String user_id) {
+	      //BoardDTO dto를 파라미터로 받아서 처리하는 방법
+	      //System.out.println(dto.getBoard_no());
+	      if(user_id != null) {
+	         System.out.println(board_no);
+	         System.out.println(user_id);
+	         //DTO에 담기 
+	         //Service에게 일 시키기 
+	         return "redirect:/board";
+	         
+	      } else {
+	         //로그인 하지 않았을 때
+	         return "redirect:/login";
+	      }
+	}
+	   //글 수정하기 
+	   @GetMapping("/update")
+	   public String update(Model model,
+			   @RequestParam(name="board_no", required =true) int board_no,
+			   @SessionAttribute(name="user_id", required= false) String user_id) {
+		   if(user_id != null ) {
+			   //DTO값 넣기
+			   BoardDTO dto = new BoardDTO();
+			   dto.setBoard_no(board_no);
+			   dto.setUser_id(user_id);
+			   
+			   BoardDTO result = boardService.update(dto);
+			   
+			   //정확하게 왔다면 model에 붙이기 
+			   
+			   return "update";
+		   }else {
+			   return "redirect:/login"; //로그인 값이 없을때
+		   }
+	   }
 
 
 }
