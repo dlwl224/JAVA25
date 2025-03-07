@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 
 import com.poseidon.web.dao.BoardDAO;
 import com.poseidon.web.dto.BoardDTO;
+import com.poseidon.web.dto.TempDTO;
+import com.poseidon.web.util.Util;
 
 @Service
 public class BoardService {
 	@Autowired
 	private BoardDAO boardDAO;
+	
+	@Autowired
+	private Util util;
 	
 	public List<BoardDTO> list(){
 		return boardDAO.list();
@@ -34,14 +39,34 @@ public class BoardService {
 		
 	}
 
-	public BoardDTO detail(int board_no) {	
+	public BoardDTO detail(BoardDTO dto) {	
 		//필요한 로직이 있다면 적어주세요.
-		return boardDAO.detail(board_no);
+		return boardDAO.detail(dto);
 	}
 
 	public int del(BoardDTO dto) {
 	
 		return boardDAO.del(dto);
+	}
+
+	public BoardDTO update(BoardDTO dto) {
+		return boardDAO.update(dto);
+	}
+
+	public void update2(BoardDTO dto) {
+		//제목에 html<,> 특수기호로 변경해주세요		
+		dto.setBoard_title(util.htmlTag(dto.getBoard_title()));
+		// 본문 내용에 <.> 특수기호로 변경해주세요
+		dto.setBoard_content(util.htmlTag(dto.getBoard_content()));
+		// 본문 내용에 엔터를 <br>로 변경해주세요
+		dto.setBoard_content(util.newLine(dto.getBoard_content()));
+		
+		boardDAO.update2(dto);
+		
+	}
+
+	public TempDTO temp(TempDTO dto) {
+		return boardDAO.temp(dto);
 	}
 
 }

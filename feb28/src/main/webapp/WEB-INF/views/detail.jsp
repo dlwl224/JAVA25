@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" herf="css/menu.css">
+<link rel="stylesheet" href="css/menu.css">
 
 <style type="text/css">
 .detail-div{
@@ -42,10 +42,12 @@
 }
 </style>
 <script type="text/javascript">
+
+
 window.onload= function(){
 	//-------------------------
 	//let edit=document.getElementById('edit').addEventListener('click',edit);
-	let edit=document.getElementById('edit').onclick= function(){edit();};
+	document.getElementById('edit').onclick= function(){edit();};
 	
 	//alert(document.getElementById('edit').src);
 }
@@ -53,7 +55,7 @@ window.onload= function(){
 
 function edit(){
 	if(confirm('수정하시겠습니까?')){
-		location.href="/update?board_no=${detail.board_no}";
+		location.href="./update?board_no=${detail.board_no}";
 	}
 }
 
@@ -109,9 +111,6 @@ function del(){
 	</div>
 </div> <!--  detail-div끝  -->
 
-
 ${detail.board_like }<br>
-
-
 </body>
 </html>

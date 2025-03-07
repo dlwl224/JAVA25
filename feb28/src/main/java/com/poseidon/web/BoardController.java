@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.poseidon.web.dto.BoardDTO;
+import com.poseidon.web.dto.TempDTO;
 import com.poseidon.web.service.BoardService;
 import com.poseidon.web.util.Util;
 
@@ -104,7 +105,9 @@ public class BoardController {
 		//System.out.println(board_no);
 		
 		//boardService가 일하게 하기
-		BoardDTO detail=boardService.detail(board_no);
+		BoardDTO dto= new BoardDTO();
+		dto.setBoard_no(board_no);
+		BoardDTO detail=boardService.detail(dto);
 		model.addAttribute("detail",detail);
 		return "detail";	
 		
@@ -140,15 +143,45 @@ public class BoardController {
 			   dto.setBoard_no(board_no);
 			   dto.setUser_id(user_id);
 			   
-			   BoardDTO result = boardService.update(dto);
+			   //BoardDTO result = boardService.update(dto);
+			   BoardDTO result= boardService.detail(dto);
 			   
+			   //content에 있는 <br>을 다시 원래대로 복수하기
+			   result.setBoard_content(util.renewLine(result.getBoard_content()));
+			 
 			   //정확하게 왔다면 model에 붙이기 
-			   
+			   model.addAttribute("update",result);
 			   return "update";
 		   }else {
 			   return "redirect:/login"; //로그인 값이 없을때
 		   }
 	   }
-
-
+	   
+	   //0307 웹페이지 화면 구축
+	   //사용자가 글 수정을 완료하고 저장하기를 눌렀을때 /update post
+	   @PostMapping("/update")
+	   public String update(BoardDTO dto, @SessionAttribute(name="user_id", required= false) String user_id) {
+		   if(user_id != null) {
+			   dto.setUser_id(user_id);
+			   boardService.update2(dto); //이름 중복 : 진짜 수정된 값 저장하기 
+			   return "redirect:/detail?board_no=" +dto.getBoard_no();
+		   }else {
+			   return "redirect:/login";
+		   }
+	   }
+	   
+	   //ResultMap 사용해보기 
+	   //TempDTO만들어서 사용하겠습니다. 
+	   @GetMapping("/temp")
+	   public String temp(Model model,
+		         @RequestParam(value = "board_no", required = true, defaultValue = "1") int board_no) {
+		   //1. TempDTO 만들기 
+		   TempDTO dto = new TempDTO();
+		   dto.setNo(board_no);
+		   
+		   TempDTO result= boardService.temp(dto);
+		   model.addAttribute("detail", result);
+		   return "temp";
+	   }
+	   
 }
